@@ -1,45 +1,44 @@
-import React, {useState} from "react";
+import React from "react";
 import { StyledDivBanner, StyledDivErrorMsg, StyledImgSlides, StyledMainDiv, StyledSectionStatus, StyledSectionWaybill, StyledSectionWaybillList } from "./styles";
 import { StyledButton, StyledInputSelect, StyledInputSpan } from "../UI/styles";
 import getImages from "../utils/getImages";
-import { PlusDivs, SlideImages } from "../utils/slideImages";
-import { useFetchLocalStgGuides, useFetchLocalStgHistory } from "../Hooks/useFetchLocalStorage";
-import getFormItems from "../utils/getFormItems";
-import { ErrorMsg, GuideItems, StatusOrder } from "../../interfaces/guideParameters";
-import { handleGuideStatus } from "../utils/handleGuideStatus";
-import { saveLocalStgHistory } from "../utils/saveToLocalStorage";
+import { PlusDivs } from "../utils/slideImages";
+import { GuideItems, StatusOrder } from "../../interfaces/guideParameters";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store/store";
+import { addGuide, updateGuideStatus } from "../../store/guideSlice";
+
+declare const require: any;
+
 const Guides = () => {
     const images:Record<string,string> = getImages((require as any).context('../../assets/img',false,/\.(png|jpe?g|svg)$/));
     
-    const localStgGuides = 'guidesTable';
-    const localStgHistory = 'historicalTable';
-    const { guides, setGuides} = useFetchLocalStgGuides(localStgGuides);//console.log(guides);
-    const { history, setHistory} = useFetchLocalStgHistory(localStgHistory);
-    const guideErrors: ErrorMsg = {
-        guideNrError: '' as string,
-        sourceError: '' as string,
-        destinationError: '' as string,
-        addresseeError: '' as string,
-        creationDateError: '' as string,
-        statusError: '' as string,
-    };
-    const[errorMessage, setErrorMessage] = useState<ErrorMsg>(guideErrors);
+    // Create dispatch to work with the store
+    const dispatch = useDispatch<AppDispatch>();
+
+    // Get data from store
+    const guides = useSelector((state:RootState) => state.guides.guides);//console.log(guides);
+    const guideErrors = useSelector((state:RootState) => state.guides.errors);//console.log(guideErrors)
+    
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        const formData = new FormData(e.currentTarget);
+
+        const newItem: GuideItems = {
+                guideNr: formData.get('guideNr') as string,
+                source: formData.get('source') as string,
+                destination: formData.get('destination') as string,
+                addressee: formData.get('addressee') as string,
+                creationDate: formData.get('creationDate') as string,
+                status: formData.get('status') as string
+            }
+
+        dispatch(addGuide(newItem));
         
-        const result = getFormItems(e.currentTarget, guides, setGuides, setHistory, localStgGuides, localStgHistory);
-
-        if (result.errors) {
-            // console.log(result.errors);
-            setErrorMessage(result.errors);
-        } else {
-            e.currentTarget.reset();
-            // console.log(guideErrors);
-            setErrorMessage(guideErrors);
-        }
     };
-
+    // console.log(guides)
     const statusOrder: StatusOrder = {
         '0': 0, //Status envio
         '1': 1, //Pendiente
@@ -49,16 +48,13 @@ const Guides = () => {
 
     const handleSetGuides = (guide: GuideItems) => {
         const selectElement = document.getElementById(`select-${guide.guideNr}`) as HTMLSelectElement;
-        const selectedValue = selectElement.value;
+        const selectedValue = selectElement.value;console.log(selectedValue)
 
-        const result = handleGuideStatus(guide.guideNr, selectedValue, setGuides, localStgGuides);//console.log(result)
-        if(result.success && result.updatedList){
-            saveLocalStgHistory(guide,selectedValue, setHistory, localStgHistory);//console.log(history);
-        };
+        // Update guide status from table button
+        dispatch(updateGuideStatus({guideNr: guide.guideNr, newStatus: selectedValue}));
+        
     };
-    var slideIndex = 1;
-    SlideImages(slideIndex);
-    //console.log(guides);
+    
     const counts = guides.reduce<Record<string,number>>((acc, guide) => {
         acc[guide.status!] = (acc[guide.status!] || 0) +1;
         return acc;
@@ -68,9 +64,9 @@ const Guides = () => {
             <StyledDivBanner>
                 <h1>Hound Express</h1>
                 <h2>Para entregas rápidas, tu mejor aliado</h2>
-                <StyledImgSlides className="slides" src={images['plane.jpg']}/>
-                <StyledImgSlides className="slides" src={images['andreas.jpg']}/>
-                <StyledImgSlides className="slides" src={images['everest.jpg']}/>
+                <StyledImgSlides className="slides" src={images['plane.jpg']} style={{display: 'block'}}/>
+                <StyledImgSlides className="slides" src={images['andreas.jpg']} style={{display: 'none'}}/>
+                <StyledImgSlides className="slides" src={images['everest.jpg']} style={{display: 'none'}}/>
               
                 <StyledButton id="slideMinus" onClick={() =>PlusDivs(-1)}>&#10094;</StyledButton>
                 <StyledButton id="slidePlus" onClick={() =>PlusDivs(+1)}>&#10095;</StyledButton>
@@ -86,7 +82,7 @@ const Guides = () => {
                                 <input type="number" id="guideNr" name="guideNr" 
                                 placeholder="Nu&#769;mero de gui&#769;a"
                                 title="Nu&#769;mero de gui&#769;a"/>
-                            <StyledDivErrorMsg id="guideError">{errorMessage.guideNrError ? errorMessage.guideNrError:''}</StyledDivErrorMsg>
+                            <StyledDivErrorMsg id="guideError">{guideErrors.guideNrError ? guideErrors.guideNrError:''}</StyledDivErrorMsg>
                             <span></span></StyledInputSpan>
                         </div>
                         <div>
@@ -94,7 +90,7 @@ const Guides = () => {
                             <StyledInputSpan>
                                 <input type="text" id="source" name="source" placeholder="Origen"
                                 title="Origen"/>
-                                <StyledDivErrorMsg id="sourceError">{errorMessage.sourceError ? errorMessage.sourceError:''}</StyledDivErrorMsg>
+                                <StyledDivErrorMsg id="sourceError">{guideErrors.sourceError ? guideErrors.sourceError:''}</StyledDivErrorMsg>
                             <span></span></StyledInputSpan>
                         </div>
                         <div>
@@ -102,7 +98,7 @@ const Guides = () => {
                             <StyledInputSpan>
                                 <input type="text" id="destination" name="destination" placeholder="Destino"
                                 title="Destino"/>
-                                <StyledDivErrorMsg id="destError">{errorMessage.destinationError ? errorMessage.destinationError:''}</StyledDivErrorMsg>
+                                <StyledDivErrorMsg id="destError">{guideErrors.destinationError ? guideErrors.destinationError:''}</StyledDivErrorMsg>
                             <span></span></StyledInputSpan>
                         </div>
                         <div>                        
@@ -110,7 +106,7 @@ const Guides = () => {
                             <StyledInputSpan>
                                 <input type="text" id="addressee" name="addressee" placeholder="Destinatario"
                                 title="Destinatario"/>
-                                <StyledDivErrorMsg id="addresseeError">{errorMessage.addresseeError ? errorMessage.addresseeError:''}</StyledDivErrorMsg>
+                                <StyledDivErrorMsg id="addresseeError">{guideErrors.addresseeError ? guideErrors.addresseeError:''}</StyledDivErrorMsg>
                             <span></span></StyledInputSpan>
                         </div>
                         <div>
@@ -118,7 +114,7 @@ const Guides = () => {
                             <StyledInputSpan>
                                 <input type="date" id="creationDate" name="creationDate" placeholder="Fecha de creacio&#769;n"
                                 title="Fecha de creacio&#769;n"/>
-                                <StyledDivErrorMsg id="cDateError">{errorMessage.creationDateError ? errorMessage.creationDateError:''}</StyledDivErrorMsg>
+                                <StyledDivErrorMsg id="cDateError">{guideErrors.creationDateError ? guideErrors.creationDateError:''}</StyledDivErrorMsg>
                             <span></span></StyledInputSpan>
                         </div>
                         <label>Estado del servicio</label>
@@ -128,7 +124,7 @@ const Guides = () => {
                             <option value="2">En tra&#769;nsito</option>
                             <option value="3">Entregado</option>
                         </StyledInputSelect>
-                        <StyledDivErrorMsg id="statusError">{errorMessage.statusError ? errorMessage.statusError:''}</StyledDivErrorMsg>
+                        <StyledDivErrorMsg id="statusError">{guideErrors.statusError ? guideErrors.statusError:''}</StyledDivErrorMsg>
                     </fieldset>
                     <StyledButton id="addRecord">Enviar</StyledButton>
                 </form>
