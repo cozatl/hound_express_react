@@ -1,4 +1,9 @@
-import React from 'react';
+
+export interface GuideHistory {
+    creationDate?: string | null,
+    guideNr?: string | null,
+    status?: string | null
+};
 
 export interface GuideItems {
     guideNr: string | null,
@@ -9,19 +14,13 @@ export interface GuideItems {
     status: string | null
 };
 
-export interface GuideHistory {
-    creationDate: string | null,
-    guideNr: string | null,
-    status: string | null
-};
-
 export interface ErrorMsg {
-    guideNrError: string | null,
-    sourceError: string | null,
-    destinationError: string | null,
-    addresseeError: string | null,
-    creationDateError: string | null,
-    statusError: string | null
+    guideNrError?: string,
+    sourceError?: string,
+    destinationError?: string,
+    addresseeError?: string,
+    creationDateError?: string,
+    statusError?: string
 };
 
 export interface StatusOrder {

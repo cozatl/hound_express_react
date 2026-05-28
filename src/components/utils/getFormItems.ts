@@ -2,7 +2,7 @@ import React from "react";
 import { ErrorMsg, GuideHistory, GuideItems } from "../../interfaces/guideParameters";
 import { saveLocalStgHistory } from "./saveToLocalStorage";
 
-const getFormItems = (form: HTMLFormElement, guides: GuideItems[], setGuides: React.Dispatch<React.SetStateAction<GuideItems[]>>,
+const GetFormItems = (form: HTMLFormElement, guides: GuideItems[], setGuides: React.Dispatch<React.SetStateAction<GuideItems[]>>,
                       setHistory: React.Dispatch<React.SetStateAction<GuideHistory[]>>, keyGuides: string, keyHistory: string) => {
     const formData = new FormData(form);
 
@@ -56,10 +56,10 @@ const getFormItems = (form: HTMLFormElement, guides: GuideItems[], setGuides: Re
     const updatedGuides = [...guides, newItem];
     setGuides(updatedGuides);
 
-    localStorage.setItem(keyGuides,JSON.stringify(updatedGuides));
-    saveLocalStgHistory(newItem,newItem.status!, setHistory, keyHistory);
+    // localStorage.setItem(keyGuides,JSON.stringify(updatedGuides));
+    // saveLocalStgHistory(newItem,newItem.status!, setHistory, keyHistory);
 
     return { errors: null };
 }
 
-export default getFormItems;
+export default GetFormItems;

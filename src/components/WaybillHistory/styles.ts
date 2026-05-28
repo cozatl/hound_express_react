@@ -49,7 +49,7 @@ const StyledWaybillHistSection = styled.section`
             }
             th {
                 &:nth-child(1) {
-                    width: 150px;
+                    width: 250px;
                 }
                 &:nth-child(2) {
                     width: 150px;
