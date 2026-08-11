@@ -41,7 +41,7 @@ const guideSlice = createSlice({
             if(!newGuide.creationDate) {
                 guideErrors.creationDateError = 'The field can\'t be empty.';
             };
-            if(!newGuide.status || newGuide.status <= 0) {
+            if(!newGuide.status || newGuide.status < 0) {
                 guideErrors.statusError = 'The field can\'t be empty.';
             };
             const exists = state.guides.some(
@@ -52,7 +52,7 @@ const guideSlice = createSlice({
                 guideErrors.guideNrError = 'Guide was previously added!';
                 
             };
-            if(Object.keys(guideErrors).length > 0) {console.log(Object.values(guideErrors).length)
+            if(Object.keys(guideErrors).length > 0) {
                 state.errors = guideErrors;
                 state.status = FAILED;
                 return;
