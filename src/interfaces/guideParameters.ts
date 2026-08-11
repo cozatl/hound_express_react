@@ -36,3 +36,11 @@ export interface StatusHistory {
     '2': string | null, //En transito
     '3': string | null  //Entregado
 };
+
+//Testing interface
+export interface GuideState {
+    guides: GuideItems[],
+    history: GuideHistory[],
+    status: string,
+    errors: ErrorMsg,
+}

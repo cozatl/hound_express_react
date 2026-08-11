@@ -12,7 +12,11 @@ import { addGuide, updateGuideStatus } from "../../store/guideSlice";
 declare const require: any;
 
 const Guides = () => {
-    const images:Record<string,string> = getImages((require as any).context('../../assets/img',false,/\.(png|jpe?g|svg)$/));
+    //const images:Record<string,string> = getImages((require as any).context('../../assets/img',false,/\.(png|jpe?g|svg)$/)); //Required in production
+    //Next lines required only for TESTING
+    const images = typeof require.context === 'function'
+        ? getImages((require as any).context('../../assets/img',false,/\.(png|jpe?g|svg)$/))
+        : {};
     
     // Create dispatch to work with the store
     const dispatch = useDispatch<AppDispatch>();
@@ -73,7 +77,7 @@ const Guides = () => {
             </StyledDivBanner>
             {/* <!-- Waybill insert section --> */}
             <StyledSectionWaybill id="waybill">
-                <form id="newGuide" onSubmit={handleSubmit}> {/*<!-- Form creation --> */}
+                <form id="newGuide" aria-label="Guide Form" onSubmit={handleSubmit}> {/*<!-- Form creation --> */}
                     <fieldset> {/*<!-- First organized section --> */}
                         <legend><b>Informacio&#769;n del envi&#769;o</b></legend>
                         <div>
@@ -81,44 +85,57 @@ const Guides = () => {
                             <StyledInputSpan>
                                 <input type="number" id="guideNr" name="guideNr" 
                                 placeholder="Nu&#769;mero de gui&#769;a"
-                                title="Nu&#769;mero de gui&#769;a"/>
-                            <StyledDivErrorMsg id="guideError">{guideErrors.guideNrError ? guideErrors.guideNrError:''}</StyledDivErrorMsg>
+                                title="Nu&#769;mero de gui&#769;a"
+                                aria-label="GuideNrForm"/>
+                            <StyledDivErrorMsg
+                                aria-label="GuideNrError"
+                                id="guideError"
+                                role="status">{guideErrors.guideNrError ? guideErrors.guideNrError:''}</StyledDivErrorMsg>
                             <span></span></StyledInputSpan>
                         </div>
                         <div>
                             <label htmlFor="source">Origen: </label>
                             <StyledInputSpan>
-                                <input type="text" id="source" name="source" placeholder="Origen"
-                                title="Origen"/>
+                                <input type="text" id="source" name="source"
+                                placeholder="Origen"
+                                title="Origen"
+                                aria-label="SourceForm"/>
                                 <StyledDivErrorMsg id="sourceError">{guideErrors.sourceError ? guideErrors.sourceError:''}</StyledDivErrorMsg>
                             <span></span></StyledInputSpan>
                         </div>
                         <div>
                             <label htmlFor="destination">Destino: </label>
                             <StyledInputSpan>
-                                <input type="text" id="destination" name="destination" placeholder="Destino"
-                                title="Destino"/>
+                                <input type="text" id="destination" name="destination"
+                                placeholder="Destino"
+                                title="Destino"
+                                aria-label="DestinationForm"/>
                                 <StyledDivErrorMsg id="destError">{guideErrors.destinationError ? guideErrors.destinationError:''}</StyledDivErrorMsg>
                             <span></span></StyledInputSpan>
                         </div>
                         <div>                        
                             <label htmlFor="addressee">Destinatario: </label>
                             <StyledInputSpan>
-                                <input type="text" id="addressee" name="addressee" placeholder="Destinatario"
-                                title="Destinatario"/>
+                                <input type="text" id="addressee" name="addressee"
+                                placeholder="Destinatario"
+                                title="Destinatario"
+                                aria-label="AddresseeForm"/>
                                 <StyledDivErrorMsg id="addresseeError">{guideErrors.addresseeError ? guideErrors.addresseeError:''}</StyledDivErrorMsg>
                             <span></span></StyledInputSpan>
                         </div>
                         <div>
                             <label htmlFor="creation-date">Fecha de creacio&#769;n: </label>
                             <StyledInputSpan>
-                                <input type="date" id="creationDate" name="creationDate" placeholder="Fecha de creacio&#769;n"
-                                title="Fecha de creacio&#769;n"/>
+                                <input type="date" id="creationDate" name="creationDate"
+                                placeholder="Fecha de creacio&#769;n"
+                                title="Fecha de creacio&#769;n"
+                                aria-label="CreationDateForm"/>
                                 <StyledDivErrorMsg id="cDateError">{guideErrors.creationDateError ? guideErrors.creationDateError:''}</StyledDivErrorMsg>
                             <span></span></StyledInputSpan>
                         </div>
                         <label>Estado del servicio</label>
-                        <StyledInputSelect name="status" id="newStatus">
+                        <StyledInputSelect name="status" id="newStatus"
+                            aria-label="StatusForm">
                             <option value="0">-- Status Envi&#769;o --</option>
                             <option value="1">Pendiente</option>
                             <option value="2">En tra&#769;nsito</option>
@@ -126,7 +143,7 @@ const Guides = () => {
                         </StyledInputSelect>
                         <StyledDivErrorMsg id="statusError">{guideErrors.statusError ? guideErrors.statusError:''}</StyledDivErrorMsg>
                     </fieldset>
-                    <StyledButton id="addRecord">Enviar</StyledButton>
+                    <StyledButton id="addRecord" name='addRecord'>Enviar</StyledButton>
                 </form>
             </StyledSectionWaybill>
             <hr></hr>
