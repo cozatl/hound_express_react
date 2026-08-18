@@ -14,7 +14,7 @@ const GlobalStyle = createGlobalStyle`
     }
 
     html, body {
-        background-color: #000;
+        background-color: #393e55e1;
         color: #fff;
         scrollbar-color: hsla(0, 0%, 100%, 0.3) transparent;
         scrollbar-width: 16px;

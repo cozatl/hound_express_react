@@ -1,19 +1,19 @@
-import './App.ts';
-import Theme from "./Theme/index.ts";
+// import './App.ts';
+import Theme from "./Theme/index";
 import { ThemeProvider } from "styled-components";
-import GlobalStyle from "./Theme/GlobalStyles.js";
-import Header from './components/Header/index.tsx';
+import GlobalStyle from "./Theme/GlobalStyles";
+import Header from './components/Header/index';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import Guides from './components/Guides/index.tsx';
-import { StyledMain } from './App.ts';
-import WaybillHistory from './components/WaybillHistory/index.tsx';
+import Guides from './components/Guides/index';
+import { StyledMain } from './styles';
+import WaybillHistory from './components/WaybillHistory/index';
 
 function App() {
   return (
     <>
       <ThemeProvider theme={Theme}>
         <GlobalStyle />
-        <Header className="App-header" appName='Artist Songs'/>
+        <Header appName='Hound Express'/>
         <StyledMain>
           <Routes>
             <Route path= '/' element={<Navigate to = '/home' />} />

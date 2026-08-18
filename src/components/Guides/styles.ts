@@ -76,7 +76,8 @@ const StyledSectionWaybill = styled.section`
 `;
 
 const StyledDivErrorMsg = styled.div`
-    color: red;background-color: rgb(218, 105, 0);
+    color: rgb(30 2 2);
+    background-color: rgb(235 144 59);
     font-size: 0.9em;
     margin-top: 5px;
 `;
@@ -172,6 +173,21 @@ const StyledSectionWaybillList = styled.section`
             ${BreakPoint3(css`
                 padding: 20px;
             `)};
+            label {
+                /* display: none; */
+                color: #0a4058;
+            }
+            a {
+                color: #1b6c8b;
+                -webkit-text-stroke: 0.5px #1b6c8b;
+            }
+            a:hover {
+                text-shadow: 
+                0 0 5px #324f86,
+                0 0 10px #324f86,
+                0 0 20px #607db1,
+                0 0 40px #607db1;
+            }
         }
         tr {
             padding: 35px;//font-size: 15px;
@@ -189,12 +205,13 @@ const StyledSectionWaybillList = styled.section`
         display: inline-block;
         /* padding: 10px 0; */
         height: 35px;
-        font-size: 20px;min-width: 17em;
+        font-size: 20px;
+        min-width: 14em;
         border-radius: 9999em;
         color: #2e3750;
     }
-    label {
-        color: #318caf;
+    label, legend {
+        color: #1beabd;
     }
     h2{
         color: #1beabd;padding: 10px;

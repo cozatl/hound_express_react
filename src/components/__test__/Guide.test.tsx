@@ -2,15 +2,15 @@ import { fireEvent, render, screen, within } from '@testing-library/react'
 import '@testing-library/jest-dom';
 import React from 'react';
 import Guides from '../Guides';
-import { BrowserRouter, MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import store from '../../store/store';
 import { ThemeProvider } from 'styled-components';
 import Theme from '../../Theme';
 import { configureStore } from '@reduxjs/toolkit';
-import guideReducer, { addGuide, updateGuideStatus } from '../../store/guideSlice';
-import {GuideItems, GuideState} from '../../interfaces/guideParameters';
+import guideReducer, { updateGuideStatus } from '../../store/guideSlice';
+import {GuideState} from '../../interfaces/guideParameters';
 import { IDLE } from '../../store/status';
+import { HelmetProvider } from 'react-helmet-async';
 
 
 const mockStore = configureStore({
@@ -66,20 +66,20 @@ const initialState: GuideState = {
 
 describe('Guides component', () => {
     it('should render Guides and add new guide when clicking Send button', async () => {
-        // const store = mockStore({
-        //     guides: { guides: mockGuide, isCartOpen: true }
-        // })
         
         const mockRes = {guide: mockGuide};
         
         const dispatchSpy = jest.spyOn(mockStore, 'dispatch');
+        // const alertSpy = (jest.spyOn(window, 'alert').mockImplementation(() => {}))
         //Render the song in the search results
         render( 
                 <ThemeProvider theme={Theme}>
                     <Provider store={mockStore}>
-                        <MemoryRouter>
-                            <Guides/>
-                        </MemoryRouter>
+                        <HelmetProvider>
+                            <MemoryRouter>
+                                <Guides/>
+                            </MemoryRouter>
+                        </HelmetProvider>
                     </Provider>
                 </ThemeProvider>);
 
@@ -89,17 +89,17 @@ describe('Guides component', () => {
         // 1. Target the form element by its accessible role/name
         const form = screen.getByRole('form', { name: /Guide Form/i });
 
-        const button = within(form).getByRole('button', {name:'Enviar'}); //Get button to add song to the library
+        const button = within(form).getByRole('button', {name:/Enviar/i}); //Get button to add song to the library
         fireEvent.click(button);
         
         // Validate that dispatch was executed
         expect(dispatchSpy).toHaveBeenCalled();
+        
+        // Validate if alert is displayed
+        // expect(alertSpy).toHaveBeenCalledWith('¡La guía se ha agregado correctamente!');
     });
 
     it('should render Guides and validate Send button while clicking an element in the table', async () => {
-        // const store = mockStore({
-        //     guides: { guides: mockGuide, isCartOpen: true }
-        // })
         
         const mockRes = {guide: mockGuide};
         
@@ -108,9 +108,11 @@ describe('Guides component', () => {
         render( 
                 <ThemeProvider theme={Theme}>
                     <Provider store={mockStore}>
-                        <MemoryRouter>
-                            <Guides/>
-                        </MemoryRouter>
+                        <HelmetProvider>
+                            <MemoryRouter>
+                                <Guides/>
+                            </MemoryRouter>
+                        </HelmetProvider>
                     </Provider>
                 </ThemeProvider>);
 
@@ -120,28 +122,24 @@ describe('Guides component', () => {
         // 1. Find the specific row that contains your target guide's name
         const targetRow = screen.getByRole('row', { name: /1/i });
 
-        const button = within(targetRow).getByRole('button', {name:'Enviar'}); //Get button to add song to the library
+        const button = within(targetRow).getByRole('button', {name:/Enviar/i}); //Get button to add song to the library
         fireEvent.click(button);
         
         // Validate that dispatch was executed
         expect(dispatchSpy).toHaveBeenCalled();
     });
 
-    it('should click button prevSlide from banner', async () => {
-        // const store = mockStore({
-        //     guides: { guides: mockGuide, isCartOpen: true }
-        // })
-        
+    it('should click button prevSlide from banner', async () => {        
         const mockRes = {guide: mockGuide};
-        
-        // const dispatchSpy = jest.spyOn(mockStore, 'dispatch');
         //Render the song in the search results
         render( 
                 <ThemeProvider theme={Theme}>
                     <Provider store={mockStore}>
-                        <MemoryRouter>
-                            <Guides/>
-                        </MemoryRouter>
+                        <HelmetProvider>
+                            <MemoryRouter>
+                                <Guides/>
+                            </MemoryRouter>
+                        </HelmetProvider>
                     </Provider>
                 </ThemeProvider>);
 
@@ -167,9 +165,11 @@ describe('Guides component', () => {
         render( 
                 <ThemeProvider theme={Theme}>
                     <Provider store={store}>
-                        <MemoryRouter>
-                            <Guides/>
-                        </MemoryRouter>
+                        <HelmetProvider>
+                            <MemoryRouter>
+                                <Guides/>
+                            </MemoryRouter>
+                        </HelmetProvider>
                     </Provider>
                 </ThemeProvider>);
 
@@ -179,12 +179,12 @@ describe('Guides component', () => {
         // 1. Target the form element by its accessible role/name
         const form = screen.getByRole('form', { name: /Guide Form/i });
 
-        const button = within(form).getByRole('button', {name:'Enviar'}); //Get button to add song to the library
+        const button = within(form).getByRole('button', {name:/Enviar/i}); //Get button to add song to the library
         
         fireEvent.click(button);
 
         // 1. Target the form element by its accessible role/name
-        const guideError = screen.getByRole('status', { name: /GuideNrError/i });
+        const guideError = screen.getByRole('status', { name: /Guide Nr Error/i });
         expect(within(guideError).getByText('The field can\'t be empty.')).toBeInTheDocument();
     });
 
@@ -216,58 +216,85 @@ describe('Guides component', () => {
 
     it('should validate addGuide function', async () => {
         const store = createMockStore();
+
+        const alertSpy = (jest.spyOn(window, 'alert').mockImplementation(() => {}))
                 
         // const dispatchSpy = jest.spyOn(mockStore, 'dispatch');
         //Render the song in the search results
         render( 
             <ThemeProvider theme={Theme}>
                 <Provider store={store}>
-                    <MemoryRouter>
-                        <Guides/>
-                    </MemoryRouter>
+                    <HelmetProvider>
+                        <MemoryRouter>
+                            <Guides/>
+                        </MemoryRouter>
+                    </HelmetProvider>
                 </Provider>
             </ThemeProvider>);
 
-        let guideNrInput = screen.getByRole('spinbutton', {name:'GuideNrForm'}); //Get button to add song to the library
+        let guideNrInput = screen.getByRole('spinbutton', {name:'Guide Nr Form'}); // Get form guideNr field
         fireEvent.change(guideNrInput, { target: {value: '2'}});
 
-        const sourceInput = screen.getByLabelText('SourceForm'); //Get button to add song to the library
+        const sourceInput = screen.getByLabelText('Source Form'); // Get form surce field
         fireEvent.change(sourceInput, { target: {value: 'Puebla'}});
 
-        const destinationInput = screen.getByLabelText('DestinationForm'); //Get button to add song to the library
+        const destinationInput = screen.getByLabelText('Destination Form'); // Get form destination field
         fireEvent.change(destinationInput, { target: {value: 'Durango'}});
 
-        const addresseeInput = screen.getByLabelText('AddresseeForm'); //Get button to add song to the library
+        const addresseeInput = screen.getByLabelText('Addressee Form'); // Get form addressee field
         fireEvent.change(addresseeInput, { target: {value: 'Jose Perez'}});
 
-        const creationDateInput = screen.getByLabelText('CreationDateForm'); //Get button to add song to the library
+        const creationDateInput = screen.getByLabelText('Creation Date Form'); // Get form creation Date field
         fireEvent.change(creationDateInput, { target: {value: '2026-08-10'}});
 
-        let statusInput = screen.getByLabelText('StatusForm'); //Get button to add song to the library
+        let statusInput = screen.getByLabelText('StatusForm'); // Get form status field
         fireEvent.change(statusInput, { target: {value: '0'}});
 
         // 1. Target the form element by its accessible role/name
         const form = screen.getByRole('form', { name: /Guide Form/i });
 
-        const button = within(form).getByRole('button', {name:'Enviar'}); //Get button to add song to the library
+        const button = within(form).getByRole('button', {name:/Enviar/i}); //Get button to add guide to the library
         fireEvent.click(button);
         
         fireEvent.change(guideNrInput, { target: {value: '3'}});
+        fireEvent.change(sourceInput, { target: {value: 'Puebla'}});
+        fireEvent.change(destinationInput, { target: {value: 'Durango'}});
+        fireEvent.change(addresseeInput, { target: {value: 'Jose Perez'}});
+         fireEvent.change(creationDateInput, { target: {value: '2026-08-10'}});
         fireEvent.change(statusInput, { target: {value: '1'}});
         fireEvent.click(button);
+        expect(alertSpy).toHaveBeenCalledWith('¡La guía se ha agregado correctamente!');
 
         fireEvent.change(guideNrInput, { target: {value: '4'}});
+        fireEvent.change(sourceInput, { target: {value: 'Puebla'}});
+        fireEvent.change(destinationInput, { target: {value: 'Durango'}});
+        fireEvent.change(addresseeInput, { target: {value: 'Jose Perez'}});
+         fireEvent.change(creationDateInput, { target: {value: '2026-08-10'}});
         fireEvent.change(statusInput, { target: {value: '2'}});
         fireEvent.click(button);
 
         fireEvent.change(guideNrInput, { target: {value: '5'}});
+        fireEvent.change(sourceInput, { target: {value: 'Puebla'}});
+        fireEvent.change(destinationInput, { target: {value: 'Durango'}});
+        fireEvent.change(addresseeInput, { target: {value: 'Jose Perez'}});
+         fireEvent.change(creationDateInput, { target: {value: '2026-08-10'}});
         fireEvent.change(statusInput, { target: {value: '3'}});
         fireEvent.click(button);        
 
         // By double clicking, simulate the guide was previously added
+        fireEvent.change(guideNrInput, { target: {value: '5'}});
+        fireEvent.change(sourceInput, { target: {value: 'Puebla'}});
+        fireEvent.change(destinationInput, { target: {value: 'Durango'}});
+        fireEvent.change(addresseeInput, { target: {value: 'Jose Perez'}});
+         fireEvent.change(creationDateInput, { target: {value: '2026-08-10'}});
+        fireEvent.change(statusInput, { target: {value: '3'}});
         fireEvent.click(button);
 
         fireEvent.change(guideNrInput, { target: {value: '6'}});
+        fireEvent.change(sourceInput, { target: {value: 'Puebla'}});
+        fireEvent.change(destinationInput, { target: {value: 'Durango'}});
+        fireEvent.change(addresseeInput, { target: {value: 'Jose Perez'}});
+         fireEvent.change(creationDateInput, { target: {value: '2026-08-10'}});
         fireEvent.change(statusInput, { target: {value: '-1'}});
         fireEvent.click(button);
     });
